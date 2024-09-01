@@ -11,21 +11,27 @@ func SetupRouter(authController *controller.AuthController, userController *cont
 
 	authGroup := router.Group("/api/auth")
 	{
-		authGroup.POST("/register", userController.Register)
-		authGroup.POST("/login", userController.Login)
+		authGroup.POST("/register", authController.Register)
+		authGroup.POST("/login", authController.Login)
 	}
 
 	usersGroup := router.Group("/api/users")
+	//usersGroup.Use(middleware.AuthMiddleware())
 	{
 		usersGroup.GET("/all", userController.GetAllUsers)
 		usersGroup.GET("/:username", userController.GetUserByUsername)
 	}
 
-	booksGroup := router.Group("/api/books")
+	publicBooksGroup := router.Group("/api/books")
 	{
-		booksGroup.GET("/all", bookController.GetAllBooks)
-		booksGroup.GET("/:isbn", bookController.GetBookByIsbn)
-		booksGroup.POST("/create", middleware.AdminOnly(), bookController.CreateBook)
+		publicBooksGroup.GET("/all", bookController.GetAllBooks)
+		publicBooksGroup.GET("/:isbn", bookController.GetBookByIsbn)
+	}
+
+	privateBooksGroup := router.Group("/api/books")
+	privateBooksGroup.Use(middleware.AuthMiddleware())
+	{
+		privateBooksGroup.POST("/create", middleware.AdminOnly(), bookController.CreateBook)
 	}
 
 	return router

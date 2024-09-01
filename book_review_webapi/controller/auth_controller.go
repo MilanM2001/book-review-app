@@ -17,11 +17,17 @@ func NewAuthController(service *service.UserService) *AuthController {
 	return &AuthController{service: service}
 }
 
-func (c *UserController) Register(ctx *gin.Context) {
+func (c *AuthController) Register(ctx *gin.Context) {
 	var user model.User
 	err := ctx.ShouldBindJSON(&user)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	existingUser, _ := c.service.FindOneByUsername(user.Username)
+	if existingUser != nil {
+		ctx.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
 		return
 	}
 
@@ -30,7 +36,9 @@ func (c *UserController) Register(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
+
 	user.Password = string(hashedPassword)
+	user.Role = "user"
 
 	newUser, err := c.service.Create(user)
 	if err != nil {
@@ -41,7 +49,7 @@ func (c *UserController) Register(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, newUser)
 }
 
-func (c *UserController) Login(ctx *gin.Context) {
+func (c *AuthController) Login(ctx *gin.Context) {
 	var loginData struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
@@ -72,4 +80,36 @@ func (c *UserController) Login(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"token": token})
+}
+
+func (c *AuthController) RegisterAdmin(ctx *gin.Context) {
+	var user model.User
+	err := ctx.ShouldBindJSON(&user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	existingUser, _ := c.service.FindOneByUsername(user.Username)
+	if existingUser != nil {
+		ctx.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+
+	user.Password = string(hashedPassword)
+	user.Role = "admin"
+
+	newUser, err := c.service.Create(user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, newUser)
 }
