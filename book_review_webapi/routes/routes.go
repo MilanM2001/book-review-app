@@ -6,7 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(authController *controller.AuthController, userController *controller.UserController, bookController *controller.BookController) *gin.Engine {
+func SetupRouter(authController *controller.AuthController,
+	userController *controller.UserController,
+	bookController *controller.BookController,
+	reviewController *controller.ReviewController) *gin.Engine {
 	router := gin.Default()
 
 	authGroup := router.Group("/api/auth")
@@ -15,11 +18,10 @@ func SetupRouter(authController *controller.AuthController, userController *cont
 		authGroup.POST("/login", authController.Login)
 	}
 
-	usersGroup := router.Group("/api/users")
-	//usersGroup.Use(middleware.AuthMiddleware())
+	publicUsersGroup := router.Group("/api/users")
 	{
-		usersGroup.GET("/all", userController.GetAllUsers)
-		usersGroup.GET("/:username", userController.GetUserByUsername)
+		publicUsersGroup.GET("/all", userController.GetAllUsers)
+		publicUsersGroup.GET("/:username", userController.GetUserByUsername)
 	}
 
 	publicBooksGroup := router.Group("/api/books")
@@ -32,6 +34,18 @@ func SetupRouter(authController *controller.AuthController, userController *cont
 	privateBooksGroup.Use(middleware.AuthMiddleware())
 	{
 		privateBooksGroup.POST("/create", middleware.AdminOnly(), bookController.CreateBook)
+	}
+
+	publicReviewsGroup := router.Group("/api/reviews")
+	{
+		publicReviewsGroup.GET("/all", reviewController.GetAllReviews)
+		publicReviewsGroup.GET("/:id", reviewController.GetReviewById)
+	}
+
+	privateReviewsGroup := router.Group("/api/reviews")
+	privateReviewsGroup.Use(middleware.AuthMiddleware())
+	{
+		privateReviewsGroup.POST("/create", reviewController.CreateReview)
 	}
 
 	return router

@@ -21,16 +21,19 @@ func main() {
 
 	userRepo := repository_impl.NewUserRepositoryImpl(db)
 	bookRepo := repository_impl.NewBookRepositoryImpl(db)
+	reviewRepo := repository_impl.NewReviewRepositoryImpl(db)
 
 	userService := service.NewUserService(userRepo)
 	bookService := service.NewBookService(bookRepo)
+	reviewService := service.NewReviewService(reviewRepo)
 
 	authController := controller.NewAuthController(userService)
 	userController := controller.NewUserController(userService)
 	bookController := controller.NewBookController(bookService)
+	reviewController := controller.NewReviewController(reviewService)
 
 	// Setup routes
-	router := routes.SetupRouter(authController, userController, bookController)
+	router := routes.SetupRouter(authController, userController, bookController, reviewController)
 
 	// Create an HTTP server with the Gin router
 	srv := &http.Server{
