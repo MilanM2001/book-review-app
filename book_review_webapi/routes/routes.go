@@ -3,6 +3,8 @@ package routes
 import (
 	"book-review-app/controller"
 	"book-review-app/middleware"
+	"book-review-app/utils"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,6 +13,9 @@ func SetupRouter(authController *controller.AuthController,
 	bookController *controller.BookController,
 	reviewController *controller.ReviewController) *gin.Engine {
 	router := gin.Default()
+	corsConfig := utils.CorsConfiguration()
+
+	router.Use(cors.New(corsConfig))
 
 	authGroup := router.Group("/api/auth")
 	{

@@ -11,7 +11,7 @@ const useLogin = () => {
         try {
             setIsLoading(true);
             const res = await login(username, password);
-            localStorage.set('accessToken', res.accessToken);
+            localStorage.set('accessToken', res);
             console.log("USPEO")
         } catch (error: any) {
             if (error.response && error.response.status === 401) {

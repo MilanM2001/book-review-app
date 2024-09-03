@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from 'react';
 import { useLogin } from '../hooks/authHooks';
 import { Alert, Button, Form, Input } from 'antd';
 import Title from 'antd/es/typography/Title';
+import api from '../services/api';
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");

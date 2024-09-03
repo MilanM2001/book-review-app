@@ -2,7 +2,8 @@ import api from './api';
 
 const login = async (username: string, password: string) => {
     try {
-        const response = await api.post('/auth/login', { username, password })
+        var loginData = { username, password }
+        const response = await api.post('/auth/login', loginData)
         return response.data
     } catch (error) {
         console.error("Login error:", error)

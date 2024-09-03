@@ -50,24 +50,24 @@ func (c *AuthController) Register(ctx *gin.Context) {
 }
 
 func (c *AuthController) Login(ctx *gin.Context) {
-	var loginData struct {
+	var loginDto struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
 	}
 
-	err := ctx.ShouldBindJSON(&loginData)
+	err := ctx.ShouldBindJSON(&loginDto)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	user, err := c.service.FindOneByUsername(loginData.Username)
+	user, err := c.service.FindOneByUsername(loginDto.Username)
 	if err != nil || user == nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Incorrect username or password"})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "Incorrect username or password"})
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginData.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginDto.Password))
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Incorrect username or password"})
 		return
@@ -79,7 +79,7 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"token": token})
+	ctx.JSON(http.StatusOK, token)
 }
 
 func (c *AuthController) RegisterAdmin(ctx *gin.Context) {
