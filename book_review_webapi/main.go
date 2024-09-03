@@ -7,6 +7,7 @@ import (
 	"book-review-app/routes"
 	"book-review-app/service"
 	"errors"
+	"github.com/gin-contrib/cors"
 	"golang.org/x/net/context"
 	"log"
 	"net/http"
@@ -34,6 +35,15 @@ func main() {
 
 	// Setup routes
 	router := routes.SetupRouter(authController, userController, bookController, reviewController)
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"}, // Change this to the front-end origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// Create an HTTP server with the Gin router
 	srv := &http.Server{
