@@ -1,0 +1,21 @@
+.register-container {
+    background: #f0f2f5;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-paper {
+    padding: 24px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.register-title {
+    margin-bottom: 24px;
+}
+
+.register-error {
+    margin-top: 16px;
+}

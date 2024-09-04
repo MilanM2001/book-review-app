@@ -1,106 +1,98 @@
 import { ChangeEvent, useState } from 'react';
+import { Container, Box, Typography, Paper } from '@mui/material';
 import { useLogin } from '../hooks/authHooks';
-import { Alert, Button, Form, Input } from 'antd';
-import Title from 'antd/es/typography/Title';
-import api from '../services/api';
+import { LoginRequest } from '../model/auth';
+import InputFieldTS from '../components/atoms/InputFieldTS';
+import ButtonTS from '../components/atoms/ButtonTS';
+import '../css/LoginPage.css'
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
-  const [usernameError, setUsernameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [emptyError, setEmptyError] = useState("");
+  const [usernameError, setUsernameError] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
+  const [emptyError, setEmptyError] = useState<string>('');
 
   const { loginHandler, errorMessage } = useLogin();
 
   const onChangeUsername = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-
     if (value.length < 3 || value.length > 20) {
-      setUsernameError("Username must be between 3 and 20 characters");
+      setUsernameError('Username must be between 3 and 20 characters');
     } else {
-      setUsernameError("");
+      setUsernameError('');
     }
-
     setUsername(value);
   };
 
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-
     if (value.length < 3 || value.length > 20) {
-      setPasswordError("Password must be between 3 and 20 characters");
+      setPasswordError('Password must be between 3 and 20 characters');
     } else {
-      setPasswordError("");
+      setPasswordError('');
     }
-
     setPassword(value);
   };
 
   const handleLoginClick = () => {
-    if (username.trim() === "" || password.trim() === "") {
-      setEmptyError("Fields cannot be empty");
+    if (username.trim() === '' || password.trim() === '') {
+      setEmptyError('Fields cannot be empty');
       return;
-    } else {
-      setEmptyError("");
     }
+    setEmptyError('');
 
     if (!usernameError && !passwordError) {
-      loginHandler(username, password);
+      const loginData: LoginRequest = { username, password };
+      loginHandler(loginData);
     }
   };
 
   return (
-    <div className="login-container">
-      <Title level={2}>Login</Title>
-      <Form
-        name="loginForm"
-        layout="vertical"
-        className="login-form"
-      >
-        <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: 'Please input your username!' }]}
-        >
-          <Input
+    <Container className="login-container" maxWidth="xs">
+      <Box>
+        <Paper className="login-paper">
+          <Typography className="login-title" variant="h4" align="center" gutterBottom>
+            Login
+          </Typography>
+          <InputFieldTS
+            label="Username"
             name="username"
             value={username}
+            error={usernameError}
             onChange={onChangeUsername}
-            placeholder="Username"
           />
-        </Form.Item>
-
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: 'Please input your password!' }]}
-        >
-          <Input.Password
+          <InputFieldTS
+            label="Password"
             name="password"
             value={password}
+            error={passwordError}
             onChange={onChangePassword}
-            placeholder="Password"
+            type="password"
           />
-        </Form.Item>
-
-        {errorMessage && (
-          <Alert message={errorMessage} type="error" showIcon className="login-error" />
-        )}
-
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-button"
+          {emptyError && (
+            <Typography align='center' color="error" sx={{ mt: 2 }}>
+              {emptyError}
+            </Typography>
+          )}
+          {errorMessage && (
+            <Typography align='center' color="error" sx={{ mt: 2 }}>
+              {errorMessage}
+            </Typography>
+          )}
+          <ButtonTS
+            type="button"
+            variant="contained"
             onClick={handleLoginClick}
+            fullWidth
+            label='Login'
           >
             Login
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+          </ButtonTS>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 

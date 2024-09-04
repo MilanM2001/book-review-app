@@ -1,15 +1,26 @@
+import { LoginRequest, RegisterRequest } from '../model/auth';
 import api from './api';
 
-const login = async (username: string, password: string) => {
+const login = async (loginData: LoginRequest) => {
     try {
-        var loginData = { username, password }
         const response = await api.post('/auth/login', loginData)
-        return response.data
+        return response
+
     } catch (error) {
         console.error("Login error:", error)
         throw error
     }
-};
+}
+
+const register = async (registerData: RegisterRequest) => {
+    try {
+        const response = await api.post("/auth/register", registerData)
+        return response
+    } catch (error) {
+        console.error("Register error:", error)
+        throw error
+    }
+}
 
 // const getMe = async () => {
 //   const response = await api.get('/auth/me');
@@ -18,12 +29,11 @@ const login = async (username: string, password: string) => {
 
 const logout = async () => {
     try {
-        await api.post('/auth/logout')
-        localStorage.remove('token')
+        localStorage.remove('accessToken')
     } catch (error) {
         console.error("Logout error:", error)
         throw error
     }
 };
 
-export { login, logout };
+export { login, register, logout };
