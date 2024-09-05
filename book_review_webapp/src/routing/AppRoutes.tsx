@@ -3,7 +3,8 @@ import NotFoundPage from '../pages/NotFoundPage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import HomePage from '../pages/HomePage';
-import Navbar from '../components/organisms/NavBar';
+import Navbar from '../components/organisms/Navbar';
+import MyAccount from '../pages/MyAccount';
 
 const AppRoutes = () => {
     return (
@@ -13,6 +14,7 @@ const AppRoutes = () => {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path='/' element={<HomePage />} />
+                <Route path='/my-account' element={<MyAccount />} />
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </Router>

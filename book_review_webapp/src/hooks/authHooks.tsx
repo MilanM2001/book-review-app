@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login, register } from "../services/authService";
+import { getMe, login, register } from "../services/authService";
 import { LoginRequest, RegisterRequest } from "../model/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -72,4 +72,19 @@ const useLogout = () => {
     return { logoutHandler, loading, error };
 };
 
-export { useLogin, useRegister, useLogout }
+const useGetMe = () => {
+    const [error, setError] = useState(null)
+
+    const getMeHandler = async () => {
+        try {
+            const res = await getMe()
+            return res.data
+        } catch (error: any) {
+            setError(error)
+        }
+    }
+
+    return { getMeHandler, error }
+}
+
+export { useLogin, useRegister, useLogout, useGetMe }

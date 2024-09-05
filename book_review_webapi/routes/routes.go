@@ -17,10 +17,16 @@ func SetupRouter(authController *controller.AuthController,
 
 	router.Use(cors.New(corsConfig))
 
-	authGroup := router.Group("/api/auth")
+	publicAuthGroup := router.Group("/api/auth")
 	{
-		authGroup.POST("/register", authController.Register)
-		authGroup.POST("/login", authController.Login)
+		publicAuthGroup.POST("/register", authController.Register)
+		publicAuthGroup.POST("/login", authController.Login)
+	}
+
+	privateAuthGroup := router.Group("/api/auth")
+	privateAuthGroup.Use(middleware.AuthMiddleware())
+	{
+		privateAuthGroup.GET("/getMe", authController.GetMe)
 	}
 
 	publicUsersGroup := router.Group("/api/users")

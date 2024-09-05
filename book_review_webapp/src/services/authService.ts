@@ -14,18 +14,22 @@ const login = async (loginData: LoginRequest) => {
 
 const register = async (registerData: RegisterRequest) => {
     try {
-        const response = await api.post("/auth/register", registerData)
-        return response
+        await api.post("/auth/register", registerData)
     } catch (error) {
         console.error("Register error:", error)
         throw error
     }
 }
 
-// const getMe = async () => {
-//   const response = await api.get('/auth/me');
-//   return response.data;
-// };
+const getMe = async () => {
+    try {
+        const response = await api.get('/auth/getMe');
+        return response
+    } catch (error) {
+        console.error("Error in retrieving user:", error)
+        throw error
+    }
+};
 
 const logout = async () => {
     try {
@@ -36,4 +40,4 @@ const logout = async () => {
     }
 };
 
-export { login, register, logout };
+export { login, register, getMe, logout };

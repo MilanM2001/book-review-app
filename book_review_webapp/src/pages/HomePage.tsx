@@ -1,10 +1,68 @@
-import React from 'react';
+import { Card, CardContent, CircularProgress, Container, Grid, Link, Typography } from "@mui/material";
+import { useGetAllBooks } from "../hooks/bookHooks";
+import { useNavigate } from "react-router-dom";
+import "../css/HomePage.css"
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
+  const { books, loading, error } = useGetAllBooks();
+  const navigate = useNavigate();
+
+  const handleBookClick = (isbn: string) => {
+    navigate(`/books/${isbn}`);
+  };
+
+  if (loading) {
+    return (
+      <Container>
+        <CircularProgress />
+        <Typography variant="h5" align="center" sx={{ mt: 4 }}>
+          Loading books...
+        </Typography>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Typography variant="h5" color="error" align="center" sx={{ mt: 4 }}>
+          Error loading books. Please try again later.
+        </Typography>
+      </Container>
+    );
+  }
+
   return (
-    <div className="container">
-      <h1>Welcome to the Book Review App</h1>
-    </div>
+    <Container maxWidth="lg" className="main-page-container">
+      <Typography variant="h4" gutterBottom align="center" sx={{ mt: 4, mb: 4 }}>
+        Book List
+      </Typography>
+      <Grid container spacing={4}>
+        {books.map((book) => (
+          <Grid item xs={12} sm={6} md={4} key={book.isbn}>
+            <Card className="book-card" sx={{ height: '100%' }}>
+              <CardContent>
+                <Link
+                  component="button"
+                  variant="h6"
+                  underline="hover"
+                  onClick={() => handleBookClick(book.isbn)}
+                  sx={{ textAlign: 'center', display: 'block', marginBottom: '16px' }}
+                >
+                  {book.title}
+                </Link>
+                <Typography variant="body2" color="textSecondary" align="center">
+                  Author: {book.author}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" align="center">
+                  Published: {new Date(book.release_date).toLocaleDateString()}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 };
 

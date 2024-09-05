@@ -1,9 +1,8 @@
-import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/Navbar.css'
 import { useLogout } from '../../hooks/authHooks';
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
     const navigate = useNavigate();
     const { logoutHandler } = useLogout();
     var token = localStorage.getItem("accessToken")
@@ -11,8 +10,8 @@ const Navbar: React.FC = () => {
     const handleLogout = async () => {
         await logoutHandler();
         navigate('/login');
+        localStorage.removeItem('accessToken'); 
     };
-
 
     return (
         <nav className="navbar">
@@ -25,7 +24,8 @@ const Navbar: React.FC = () => {
                     </>
                 ) : (
                     <>
-                        <Link className="logout-button" to="/login" onClick={handleLogout}>Logout</Link>
+                        <Link to="/my-account">My Account</Link>
+                        <Link to="/" onClick={handleLogout}>Logout</Link>
                     </>
                 )}
             </div>

@@ -113,3 +113,26 @@ func (c *AuthController) RegisterAdmin(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, newUser)
 }
+
+func (c *AuthController) GetMe(ctx *gin.Context) {
+	// Retrieve the username from the context (set by the middleware)
+	username, exists := ctx.Get("username")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	usernameStr, ok := username.(string)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing username"})
+		return
+	}
+
+	user, err := c.service.FindOneByUsername(usernameStr)
+	if err != nil || user == nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
+}
