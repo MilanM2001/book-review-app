@@ -1,18 +1,21 @@
-import { Container, Box, Paper, Typography } from "@mui/material";
+import { Container, Box, Paper, Typography, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText } from "@mui/material";
 import { useState, ChangeEvent } from "react";
 import ButtonTS from "../components/atoms/ButtonTS";
 import InputFieldTS from "../components/atoms/InputFieldTS";
 import { useCreateBook } from "../hooks/bookHooks";
 import { BookRequest } from "../model/book";
 import "../css/CreateBook.css"
+import { CategoryResponse } from "../model/category";
+import { useGetAllCategories } from "../hooks/categoryHooks";
 
-const CreateBookPage: React.FC = () => {
+const CreateBookPage = () => {
     const [isbn, setIsbn] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [author, setAuthor] = useState('');
     const [releaseDate, setReleaseDate] = useState('');
+    const [selectedCategories, setSelectedCategories] = useState<CategoryResponse[]>([]);
 
     const [isbnError, setIsbnError] = useState('');
     const [titleError, setTitleError] = useState('');
@@ -20,6 +23,7 @@ const CreateBookPage: React.FC = () => {
     const [emptyError, setEmptyError] = useState('');
 
     const { createBookHandler, errorMessage, loading } = useCreateBook();
+    const { categories, loading: categoryLoading, error: categoryError } = useGetAllCategories();
 
     const onChangeIsbn = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -51,6 +55,15 @@ const CreateBookPage: React.FC = () => {
         }
     };
 
+    const handleCategoryChange = (event: any) => {
+        const { value } = event.target;
+        setSelectedCategories(
+            typeof value === 'string'
+                ? categories.filter((category: any) => category.name === value)
+                : value
+        );
+    };
+
     const handleCreateBookClick = () => {
         if (!isbn || !title || !author) {
             setEmptyError('All fields are required');
@@ -67,6 +80,7 @@ const CreateBookPage: React.FC = () => {
                 image_url: imageUrl,
                 author,
                 release_date: new Date(releaseDate),
+                categories: selectedCategories,
             };
             createBookHandler(bookData);
         }
@@ -119,6 +133,24 @@ const CreateBookPage: React.FC = () => {
                         type="date"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setReleaseDate(e.target.value)}
                     />
+
+                    <FormControl fullWidth>
+                        <InputLabel>Categories</InputLabel>
+                        <Select
+                            multiple
+                            value={selectedCategories}
+                            onChange={handleCategoryChange}
+                            renderValue={(selected) => selected.map((category: CategoryResponse) => category.name).join(', ')}
+                        >
+                            {categories.map((category: any) => (
+                                <MenuItem key={category.id} value={category}>
+                                    <Checkbox checked={selectedCategories.some(c => c.id === category.id)} />
+                                    <ListItemText primary={category.name} />
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
                     {emptyError && (
                         <Typography align='center' color="error" sx={{ mt: 2 }}>
                             {emptyError}
@@ -135,7 +167,7 @@ const CreateBookPage: React.FC = () => {
                         onClick={handleCreateBookClick}
                         fullWidth
                         label={loading ? 'Creating...' : 'Create Book'}
-                        disabled={loading}
+                        disabled={loading || categoryLoading}
                     >
                         Create Book
                     </ButtonTS>

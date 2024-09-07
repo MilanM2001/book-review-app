@@ -34,6 +34,16 @@ func (repo CategoryRepositoryImpl) FindOne(ID uint) (*model.Category, error) {
 	return &category, nil
 }
 
+func (repo CategoryRepositoryImpl) FindOneByName(name string) (*model.Category, error) {
+	var category *model.Category
+	err := repo.db.Where("name = ?", name).First(&category).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return category, nil
+}
+
 func (repo CategoryRepositoryImpl) Create(category model.Category) (*model.Category, error) {
 	err := repo.db.Create(&category).Error
 	if err != nil {

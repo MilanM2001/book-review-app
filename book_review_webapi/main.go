@@ -22,17 +22,20 @@ func main() {
 	userRepo := repository_impl.NewUserRepositoryImpl(db)
 	bookRepo := repository_impl.NewBookRepositoryImpl(db)
 	reviewRepo := repository_impl.NewReviewRepositoryImpl(db)
+	categoryRepo := repository_impl.NewCategoryRepositoryImpl(db)
 
 	userService := service.NewUserService(userRepo)
 	bookService := service.NewBookService(bookRepo)
 	reviewService := service.NewReviewService(reviewRepo)
+	categoryService := service.NewCategoryService(categoryRepo)
 
 	authController := controller.NewAuthController(userService)
 	userController := controller.NewUserController(userService)
 	bookController := controller.NewBookController(bookService)
 	reviewController := controller.NewReviewController(reviewService)
+	categoryController := controller.NewCategoryController(categoryService)
 
-	router := routes.SetupRouter(authController, userController, bookController, reviewController)
+	router := routes.SetupRouter(authController, userController, bookController, reviewController, categoryController)
 
 	srv := &http.Server{
 		Addr:    ":8080",

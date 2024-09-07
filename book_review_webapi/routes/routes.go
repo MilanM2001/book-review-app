@@ -11,7 +11,8 @@ import (
 func SetupRouter(authController *controller.AuthController,
 	userController *controller.UserController,
 	bookController *controller.BookController,
-	reviewController *controller.ReviewController) *gin.Engine {
+	reviewController *controller.ReviewController,
+	categoryController *controller.CategoryController) *gin.Engine {
 	router := gin.Default()
 	corsConfig := utils.CorsConfiguration()
 
@@ -57,6 +58,17 @@ func SetupRouter(authController *controller.AuthController,
 	privateReviewsGroup.Use(middleware.AuthMiddleware())
 	{
 		privateReviewsGroup.POST("/create", reviewController.CreateReview)
+	}
+
+	publicCategoryGroup := router.Group("/api/categories")
+	{
+		publicCategoryGroup.GET("/all", categoryController.GetAllCategories)
+	}
+
+	privateCategoryGroup := router.Group("/api/categories")
+	privateCategoryGroup.Use(middleware.AdminOnly())
+	{
+		privateCategoryGroup.POST("/create", categoryController.CreateCategory)
 	}
 
 	return router

@@ -1,3 +1,5 @@
+import { CategoryResponse } from "./category"
+
 export type BookResponse = {
     isbn: string
     title: string
@@ -14,4 +16,5 @@ export type BookRequest = {
     image_url: string
     author: string
     release_date: Date
+    categories: CategoryResponse[]
 }
