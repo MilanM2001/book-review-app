@@ -1,4 +1,4 @@
-import { Card, CardContent, CircularProgress, Container, Grid, Link, Typography } from "@mui/material";
+import { Card, CardContent, CircularProgress, Container, Grid2, Link, Typography } from "@mui/material";
 import { useGetAllBooks } from "../hooks/bookHooks";
 import { useNavigate } from "react-router-dom";
 import "../css/HomePage.css"
@@ -8,7 +8,7 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleBookClick = (isbn: string) => {
-    navigate(`/books/${isbn}`);
+    navigate(`/book-details/${isbn}`);
   };
 
   if (loading) {
@@ -35,19 +35,18 @@ const HomePage: React.FC = () => {
   return (
     <Container maxWidth="lg" className="main-page-container">
       <Typography variant="h4" gutterBottom align="center" sx={{ mt: 4, mb: 4 }}>
-        Book List
+        Books
       </Typography>
-      <Grid container spacing={4}>
+      <Grid2 container spacing={4} justifyContent="center">
         {books.map((book) => (
-          <Grid item xs={12} sm={6} md={4} key={book.isbn}>
+          <Grid2 key={book.isbn}>
             <Card className="book-card" sx={{ height: '100%' }}>
               <CardContent>
                 <Link
-                  component="button"
                   variant="h6"
                   underline="hover"
                   onClick={() => handleBookClick(book.isbn)}
-                  sx={{ textAlign: 'center', display: 'block', marginBottom: '16px' }}
+                  sx={{ marginBottom: '16px', textAlign: 'center', cursor: 'pointer' }}
                 >
                   {book.title}
                 </Link>
@@ -59,11 +58,12 @@ const HomePage: React.FC = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
+          </Grid2>
         ))}
-      </Grid>
+      </Grid2>
     </Container>
   );
+
 };
 
 export default HomePage;

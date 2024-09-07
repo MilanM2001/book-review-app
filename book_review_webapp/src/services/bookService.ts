@@ -1,3 +1,4 @@
+import { BookRequest } from "../model/book"
 import api from "./api"
 
 const getAllBooks = async () => {
@@ -20,4 +21,13 @@ const getBookByIsbn = async (isbn: string) => {
     }
 }
 
-export { getAllBooks, getBookByIsbn }
+const createBook = async (book: BookRequest) => {
+    try {
+        await api.post("/books/create", book)
+    } catch (error) {
+        console.error("Create Book error:", error)
+        throw error
+    }
+}
+
+export { getAllBooks, getBookByIsbn, createBook }

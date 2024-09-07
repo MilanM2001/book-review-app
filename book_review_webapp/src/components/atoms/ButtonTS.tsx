@@ -8,6 +8,7 @@ interface ButtonProps {
     color?: 'primary' | 'secondary';
     label: string
     fullWidth?: boolean;
+    disabled: boolean
     children: React.ReactNode;
 }
 
@@ -17,6 +18,7 @@ const ButtonTS: React.FC<ButtonProps> = ({
     variant = 'contained',
     color = 'primary',
     fullWidth = false,
+    disabled,
     children
 }) => {
     return (
@@ -27,6 +29,7 @@ const ButtonTS: React.FC<ButtonProps> = ({
             fullWidth={fullWidth}
             onClick={onClick}
             sx={{ mt: 2 }}
+            disabled={disabled}
         >
             {children}
         </MuiButton>

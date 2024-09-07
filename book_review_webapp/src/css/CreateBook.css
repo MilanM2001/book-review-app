@@ -1,0 +1,21 @@
+.create-book-container {
+    background: #f0f2f5;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.create-book-paper {
+    padding: 24px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.create-book-title {
+    margin-bottom: 24px;
+}
+
+.create-book-error {
+    margin-top: 16px;
+}
