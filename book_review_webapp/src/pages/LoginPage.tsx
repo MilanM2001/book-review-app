@@ -86,8 +86,7 @@ const LoginPage = () => {
             variant="contained"
             onClick={handleLoginClick}
             fullWidth
-            label='Login'
-          >
+            label='Login' disabled={false}         >
             Login
           </ButtonTS>
         </Paper>

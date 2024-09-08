@@ -58,3 +58,15 @@ func (c *BookController) CreateBook(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, newBook)
 }
+
+func (c *BookController) SearchBooks(ctx *gin.Context) {
+	term := ctx.Query("term")
+
+	books, err := c.service.SearchBooks(term)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, books)
+}

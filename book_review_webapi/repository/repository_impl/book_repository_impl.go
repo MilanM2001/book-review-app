@@ -42,3 +42,12 @@ func (repo *BookRepositoryImpl) Create(book model.Book) (*model.Book, error) {
 
 	return &book, nil
 }
+
+func (repo *BookRepositoryImpl) Search(term string) ([]model.Book, error) {
+	var books []model.Book
+	err := repo.db.Where("title LIKE ? OR author LIKE ?", "%"+term+"%", "%"+term+"%").Find(&books).Error
+	if err != nil {
+		return nil, err
+	}
+	return books, nil
+}

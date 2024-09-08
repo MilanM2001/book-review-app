@@ -13,8 +13,8 @@ const getAllBooks = async () => {
 
 const getBookByIsbn = async (isbn: string) => {
     try {
-        const response = await api.get(`/books/${isbn}`)
-        return response.data
+        const res = await api.get(`/books/${isbn}`)
+        return res.data
     } catch (error) {
         console.error("Error in finding book by ISBN:", error)
         throw error
@@ -30,4 +30,14 @@ const createBook = async (book: BookRequest) => {
     }
 }
 
-export { getAllBooks, getBookByIsbn, createBook }
+const searchBooksByTerm = async (term: string) => {
+    try {
+        const res = await api.get(`/books/search`, { params: { term } });
+        return res.data;
+    } catch (error) {
+        console.log("Error in finding books by term:", term);
+        throw error;
+    }
+};
+
+export { getAllBooks, getBookByIsbn, createBook, searchBooksByTerm }

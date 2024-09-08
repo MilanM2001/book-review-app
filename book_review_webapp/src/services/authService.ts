@@ -24,7 +24,7 @@ const register = async (registerData: RegisterRequest) => {
 const getMe = async () => {
     try {
         const response = await api.get('/auth/getMe');
-        return response
+        return response.data
     } catch (error) {
         console.error("Error in retrieving user:", error)
         throw error

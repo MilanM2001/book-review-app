@@ -1,21 +1,19 @@
 .create-book-container {
-    background: #f0f2f5;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-top: 50px;
 }
 
 .create-book-paper {
-    padding: 24px;
-    max-width: 400px;
-    width: 100%;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.create-book-title {
-    margin-bottom: 24px;
+.create-book-paper h4 {
+    font-weight: bold;
 }
 
-.create-book-error {
-    margin-top: 16px;
+button[disabled] {
+    cursor: not-allowed;
 }

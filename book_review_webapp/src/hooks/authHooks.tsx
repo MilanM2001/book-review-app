@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getMe, login, register } from "../services/authService";
 import { LoginRequest, RegisterRequest } from "../model/auth";
 import { useNavigate } from "react-router-dom";
+import { UserResponse } from "../model/user";
 
 const useLogin = () => {
     const [loading, setIsLoading] = useState(false);
@@ -60,6 +61,7 @@ const useLogout = () => {
     const logoutHandler = async () => {
         try {
             setIsLoading(true);
+            localStorage.removeItem("accessToken")
             localStorage.clear()
         } catch (error: any) {
             setError(error);
@@ -78,9 +80,10 @@ const useGetMe = () => {
     const getMeHandler = async () => {
         try {
             const res = await getMe()
-            return res.data
+            return res
         } catch (error: any) {
             setError(error)
+            return null
         }
     }
 

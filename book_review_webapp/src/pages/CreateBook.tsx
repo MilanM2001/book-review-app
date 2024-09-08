@@ -1,12 +1,11 @@
-import { Container, Box, Paper, Typography, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText } from "@mui/material";
 import { useState, ChangeEvent } from "react";
-import ButtonTS from "../components/atoms/ButtonTS";
 import InputFieldTS from "../components/atoms/InputFieldTS";
 import { useCreateBook } from "../hooks/bookHooks";
 import { BookRequest } from "../model/book";
 import "../css/CreateBook.css"
 import { CategoryResponse } from "../model/category";
 import { useGetAllCategories } from "../hooks/categoryHooks";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
 const CreateBookPage = () => {
     const [isbn, setIsbn] = useState('');
@@ -55,13 +54,20 @@ const CreateBookPage = () => {
         }
     };
 
-    const handleCategoryChange = (event: any) => {
-        const { value } = event.target;
-        setSelectedCategories(
-            typeof value === 'string'
-                ? categories.filter((category: any) => category.name === value)
-                : value
-        );
+    const handleCategoryChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const categoryId = e.target.value;
+        const isChecked = e.target.checked;
+
+        setSelectedCategories(prevSelectedCategories => {
+            if (isChecked) {
+                // Add category
+                const selectedCategory = categories.find(category => category.id === Number(categoryId));
+                return selectedCategory ? [...prevSelectedCategories, selectedCategory] : prevSelectedCategories;
+            } else {
+                // Remove category
+                return prevSelectedCategories.filter(category => category.id !== Number(categoryId));
+            }
+        });
     };
 
     const handleCreateBookClick = () => {
@@ -87,92 +93,96 @@ const CreateBookPage = () => {
     };
 
     return (
-        <Container className="create-book-container" maxWidth="xs">
-            <Box>
-                <Paper className="create-book-paper">
-                    <Typography className="create-book-title" variant="h4" align="center" gutterBottom>
-                        Create Book
-                    </Typography>
-                    <InputFieldTS
-                        label="ISBN"
-                        name="isbn"
-                        value={isbn}
-                        error={isbnError}
-                        onChange={onChangeIsbn}
-                    />
-                    <InputFieldTS
-                        label="Title"
-                        name="title"
-                        value={title}
-                        error={titleError}
-                        onChange={onChangeTitle}
-                    />
-                    <InputFieldTS
-                        label="Description"
-                        name="description"
-                        value={description}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
-                    />
-                    <InputFieldTS
-                        label="Image URL"
-                        name="image_url"
-                        value={imageUrl}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setImageUrl(e.target.value)}
-                    />
-                    <InputFieldTS
-                        label="Author"
-                        name="author"
-                        value={author}
-                        error={authorError}
-                        onChange={onChangeAuthor}
-                    />
-                    <InputFieldTS
-                        label="Release Date"
-                        name="release_date"
-                        value={releaseDate}
-                        type="date"
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setReleaseDate(e.target.value)}
-                    />
+        <Container className="create-book-container">
+            <Row className="justify-content-center">
+                <Col xs={12} md={6}>
+                    <div className="create-book-paper">
+                        <h4 className="text-center mb-4">Create Book</h4>
 
-                    <FormControl fullWidth>
-                        <InputLabel>Categories</InputLabel>
-                        <Select
-                            multiple
-                            value={selectedCategories}
-                            onChange={handleCategoryChange}
-                            renderValue={(selected) => selected.map((category: CategoryResponse) => category.name).join(', ')}
-                        >
-                            {categories.map((category: any) => (
-                                <MenuItem key={category.id} value={category}>
-                                    <Checkbox checked={selectedCategories.some(c => c.id === category.id)} />
-                                    <ListItemText primary={category.name} />
-                                </MenuItem>
+                        <InputFieldTS
+                            label="ISBN"
+                            name="isbn"
+                            value={isbn}
+                            error={isbnError}
+                            onChange={onChangeIsbn}
+                        />
+
+                        <InputFieldTS
+                            label="Title"
+                            name="title"
+                            value={title}
+                            error={titleError}
+                            onChange={onChangeTitle}
+                        />
+
+                        <Form.Group controlId="description" className="mt-3">
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={3}
+                                value={description}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
+                            />
+                        </Form.Group>
+
+                        <InputFieldTS
+                            label="Image URL"
+                            name="image_url"
+                            value={imageUrl}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setImageUrl(e.target.value)}
+                        />
+
+                        <InputFieldTS
+                            label="Author"
+                            name="author"
+                            value={author}
+                            error={authorError}
+                            onChange={onChangeAuthor}
+                        />
+
+                        <Form.Group controlId="releaseDate" className="mt-3">
+                            <Form.Label>Release Date</Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={releaseDate}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => setReleaseDate(e.target.value)}
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="categories" className="mt-3">
+                            <Form.Label>Categories</Form.Label>
+                            {categories.map((category: CategoryResponse) => (
+                                <Form.Check
+                                    key={category.id}
+                                    type="checkbox"
+                                    id={`category-${category.id}`}
+                                    label={category.name}
+                                    value={category.id}
+                                    checked={selectedCategories.some(c => c.id === category.id)}
+                                    onChange={handleCategoryChange}
+                                />
                             ))}
-                        </Select>
-                    </FormControl>
+                        </Form.Group>
 
-                    {emptyError && (
-                        <Typography align='center' color="error" sx={{ mt: 2 }}>
-                            {emptyError}
-                        </Typography>
-                    )}
-                    {errorMessage && (
-                        <Typography align='center' color="error" sx={{ mt: 2 }}>
-                            {errorMessage}
-                        </Typography>
-                    )}
-                    <ButtonTS
-                        type="button"
-                        variant="contained"
-                        onClick={handleCreateBookClick}
-                        fullWidth
-                        label={loading ? 'Creating...' : 'Create Book'}
-                        disabled={loading || categoryLoading}
-                    >
-                        Create Book
-                    </ButtonTS>
-                </Paper>
-            </Box>
+                        {emptyError && (
+                            <p className="text-center text-danger mt-2">{emptyError}</p>
+                        )}
+
+                        {errorMessage && (
+                            <p className="text-center text-danger mt-2">{errorMessage}</p>
+                        )}
+
+                        <Button
+                            className="mt-4"
+                            variant="primary"
+                            onClick={handleCreateBookClick}
+                            disabled={loading || categoryLoading}
+                        >
+                            {loading ? 'Creating...' : 'Create Book'}
+                        </Button>
+                    </div>
+                </Col>
+            </Row>
         </Container>
     );
 };

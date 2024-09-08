@@ -40,6 +40,7 @@ func SetupRouter(authController *controller.AuthController,
 	{
 		publicBooksGroup.GET("/all", bookController.GetAllBooks)
 		publicBooksGroup.GET("/:isbn", bookController.GetBookByIsbn)
+		publicBooksGroup.GET("/search", bookController.SearchBooks)
 	}
 
 	privateBooksGroup := router.Group("/api/books")

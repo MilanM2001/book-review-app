@@ -1,16 +1,31 @@
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/Navbar.css'
-import { useLogout } from '../../hooks/authHooks';
+import { useGetMe, useLogout } from '../../hooks/authHooks';
+import { useEffect, useState } from 'react';
+import { UserResponse } from '../../model/user';
 
 const Navbar = () => {
     const navigate = useNavigate();
     const { logoutHandler } = useLogout();
-    var token = localStorage.getItem("accessToken")
+    const { getMeHandler, error } = useGetMe();
+    const [user, setUser] = useState<UserResponse | null>(null);
+    const token = localStorage.getItem("accessToken");
+
+    useEffect(() => {
+        if (token) {
+            // Fetch user data only if token exists
+            getMeHandler().then((res) => {
+                if (res) {
+                    setUser(res);
+                }
+            });
+        }
+    }, [token]);
 
     const handleLogout = async () => {
         await logoutHandler();
+        setUser(null); // Clear user on logout
         navigate('/login');
-        localStorage.removeItem('accessToken');
     };
 
     return (
@@ -25,7 +40,9 @@ const Navbar = () => {
                 ) : (
                     <>
                         <Link to="/my-account">My Account</Link>
-                        <Link to="/create-book">Add Book</Link>
+                        {user?.role === 'admin' && (
+                            <Link to="/create-book">Add Book</Link>
+                        )}
                         <Link to="/" onClick={handleLogout}>Logout</Link>
                     </>
                 )}

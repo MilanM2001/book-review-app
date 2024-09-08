@@ -24,3 +24,7 @@ func (service *BookService) FindOneByIsbn(isbn string) (*model.Book, error) {
 func (service *BookService) Create(book model.Book) (*model.Book, error) {
 	return service.repo.Create(book)
 }
+
+func (service *BookService) SearchBooks(term string) ([]model.Book, error) {
+	return service.repo.Search(term)
+}
