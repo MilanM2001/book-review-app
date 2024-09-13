@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { getMe, login, register } from "../services/authService";
+import { getMe, login, refreshToken, register } from "../services/authService";
 import { LoginRequest, RegisterRequest } from "../model/auth";
 import { useNavigate } from "react-router-dom";
-import { UserResponse } from "../model/user";
 
 const useLogin = () => {
     const [loading, setIsLoading] = useState(false);
@@ -13,9 +12,11 @@ const useLogin = () => {
     const loginHandler = async (loginData: LoginRequest) => {
         try {
             setIsLoading(true);
-            const res = await login(loginData);
-            const token = res.data;
-            localStorage.setItem('accessToken', token);
+            const data = await login(loginData);
+            const accessToken = data.accessToken;
+            const refreshToken = data.refreshToken
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken)
             navigate("/")
         } catch (error: any) {
             if (error.response && (error.response.status === 403 || error.response.status === 401)) {
@@ -28,6 +29,30 @@ const useLogin = () => {
     };
 
     return { loginHandler, loading, error, errorMessage };
+};
+
+const useRefreshToken = () => {
+    const [loading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const refreshTokenHandler = async () => {
+        try {
+            setIsLoading(true);
+            const data = await refreshToken();
+            const newAccessToken = data.accessToken;
+
+            localStorage.setItem('accessToken', newAccessToken);
+            return newAccessToken;
+        } catch (error: any) {
+            setError(error);
+            console.error("Refresh token error:", error);
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return { refreshTokenHandler, loading, error };
 };
 
 const useRegister = () => {
@@ -62,6 +87,7 @@ const useLogout = () => {
         try {
             setIsLoading(true);
             localStorage.removeItem("accessToken")
+            localStorage.removeItem("refreshToken")
             localStorage.clear()
         } catch (error: any) {
             setError(error);
@@ -90,4 +116,4 @@ const useGetMe = () => {
     return { getMeHandler, error }
 }
 
-export { useLogin, useRegister, useLogout, useGetMe }
+export { useLogin, useRefreshToken, useRegister, useLogout, useGetMe }

@@ -22,6 +22,7 @@ func SetupRouter(authController *controller.AuthController,
 	{
 		publicAuthGroup.POST("/register", authController.Register)
 		publicAuthGroup.POST("/login", authController.Login)
+		publicAuthGroup.POST("/refresh", authController.RefreshToken)
 	}
 
 	privateAuthGroup := router.Group("/api/auth")

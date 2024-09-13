@@ -55,6 +55,11 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		Password string `json:"password"`
 	}
 
+	var loginResponse struct {
+		AccessToken  string `json:"accessToken"`
+		RefreshToken string `json:"refreshToken"`
+	}
+
 	err := ctx.ShouldBindJSON(&loginData)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -73,13 +78,47 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := utils.GenerateToken(user.Username, user.Role)
+	accessToken, refreshToken, err := utils.GenerateTokens(user.Username, user.Role)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, token)
+	loginResponse.AccessToken = accessToken
+	loginResponse.RefreshToken = refreshToken
+
+	ctx.JSON(http.StatusOK, loginResponse)
+}
+
+func (c *AuthController) RefreshToken(ctx *gin.Context) {
+	var tokenData struct {
+		RefreshToken string `json:"refreshToken"`
+	}
+	var tokenResponse struct {
+		AccessToken string `json:"accessToken"`
+	}
+
+	err := ctx.ShouldBindJSON(&tokenData)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	claims, err := utils.ParseToken(tokenData.RefreshToken)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
+		return
+	}
+
+	accessToken, _, err := utils.GenerateTokens(claims.Username, claims.Role)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate new access token"})
+		return
+	}
+
+	tokenResponse.AccessToken = accessToken
+
+	ctx.JSON(http.StatusOK, tokenResponse)
 }
 
 func (c *AuthController) RegisterAdmin(ctx *gin.Context) {

@@ -1,14 +1,30 @@
-import { LoginRequest, RegisterRequest } from '../model/auth';
+import { LoginRequest, RefreshTokenRequest, RegisterRequest } from '../model/auth';
 import api from './api';
 
 const login = async (loginData: LoginRequest) => {
     try {
         const response = await api.post('/auth/login', loginData)
-        return response
-
+        return response.data
     } catch (error) {
         console.error("Login error:", error)
         throw error
+    }
+}
+
+const refreshToken = async () => {
+    try {
+        const storedRefreshToken = localStorage.getItem("refreshToken");
+        if (!storedRefreshToken) throw new Error("No refresh token found");
+
+        let tokenData: RefreshTokenRequest = {
+            refreshToken: storedRefreshToken
+        }
+
+        const response = await api.post('/auth/refresh', tokenData);
+        return response.data;
+    } catch (error) {
+        console.error("Refresh token error:", error);
+        throw error;
     }
 }
 
@@ -31,13 +47,5 @@ const getMe = async () => {
     }
 };
 
-const logout = async () => {
-    try {
-        localStorage.remove('accessToken')
-    } catch (error) {
-        console.error("Logout error:", error)
-        throw error
-    }
-};
 
-export { login, register, getMe, logout };
+export { login, refreshToken, register, getMe };

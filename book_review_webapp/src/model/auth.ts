@@ -8,3 +8,7 @@ export type RegisterRequest = {
     password: string
     email: string
 }
+
+export type RefreshTokenRequest = {
+    refreshToken: string
+}
