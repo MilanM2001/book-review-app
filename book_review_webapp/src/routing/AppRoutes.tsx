@@ -7,19 +7,22 @@ import Navbar from '../components/organisms/Navbar';
 import MyAccount from '../pages/MyAccount';
 import BookDetails from '../pages/BookDetails';
 import CreateBookPage from '../pages/CreateBook';
+import { AppRoute } from './routesEnum';
+import UpdateBookPage from '../pages/UpdateBook';
 
 const AppRoutes = () => {
     return (
         <Router>
             <Navbar />
             <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path='/' element={<HomePage />} />
-                <Route path='/book-details/:isbn' element={<BookDetails />} />
-                <Route path='/create-book' element={<CreateBookPage />} />
-                <Route path='/my-account' element={<MyAccount />} />
-                <Route path="*" element={<NotFoundPage />} />
+                <Route path={AppRoute.LOGIN} element={<LoginPage />} />
+                <Route path={AppRoute.REGISTER} element={<RegisterPage />} />
+                <Route path={AppRoute.HOME} element={<HomePage />} />
+                <Route path={AppRoute.BOOK_DETAILS} element={<BookDetails />} />
+                <Route path={AppRoute.CREATE_BOOK} element={<CreateBookPage />} />
+                <Route path={AppRoute.UPDATE_BOOK} element={<UpdateBookPage />} />
+                <Route path={AppRoute.MY_ACCOUNT} element={<MyAccount />} />
+                <Route path={AppRoute.NOT_FOUND} element={<NotFoundPage />} />
             </Routes>
         </Router>
     );

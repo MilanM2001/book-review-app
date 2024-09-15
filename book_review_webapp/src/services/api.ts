@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useRefreshToken } from "../hooks/authHooks";
 import { refreshToken } from "./authService";
 
 const api = axios.create({

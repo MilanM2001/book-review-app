@@ -1,35 +1,25 @@
-import { useGetAllBooks, useSearchBooks } from "../hooks/bookHooks";
+import { useGetAllBooksPageable } from "../hooks/bookHooks";
 import { useNavigate } from "react-router-dom";
 import "../css/HomePage.css"
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const HomePage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedTerm, setDebouncedTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 5; // Number of items per page
   const navigate = useNavigate();
 
-  const { books: allBooks, loading: allBooksLoading, error: allBooksError } = useGetAllBooks();
-  const { books: searchedBooks, loading: searchLoading, error: searchError } = useSearchBooks(debouncedTerm);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedTerm(searchTerm);
-    }, 1000); // 1 second debounce
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm]);
+  const { books, totalPages, currentPage, setCurrentPage, loading, error } = useGetAllBooksPageable(page, pageSize);
 
   const handleBookClick = (isbn: string) => {
     navigate(`/book-details/${isbn}`);
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+  const handlePageChange = (pageNumber: number) => {
+    setPage(pageNumber);
+    setCurrentPage(pageNumber);
   };
 
-  if (allBooksLoading || searchLoading) {
+  if (loading) {
     return (
       <div className="container text-center my-5">
         <div className="spinner-border text-primary" role="status">
@@ -40,7 +30,7 @@ const HomePage = () => {
     );
   }
 
-  if (allBooksError || searchError) {
+  if (error) {
     return (
       <div className="container text-center my-5">
         <h5 className="text-danger">Error loading books. Please try again later.</h5>
@@ -48,21 +38,11 @@ const HomePage = () => {
     );
   }
 
-  const booksToDisplay = debouncedTerm ? searchedBooks : allBooks;
-
   return (
     <div className="container my-5">
       <h4 className="text-center mb-4">Books</h4>
-      <input
-        type="text"
-        className="form-control mb-4"
-        placeholder="Search books by title or author"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        autoFocus
-      />
       <div className="row">
-        {booksToDisplay.map((book) => (
+        {books.map((book) => (
           <div className="col-xs-12 col-sm-6 col-md-4 mb-4" key={book.isbn}>
             <div className="card h-100 book-card">
               <img
@@ -87,6 +67,25 @@ const HomePage = () => {
             </div>
           </div>
         ))}
+      </div>
+      <div className="text-center mt-4">
+        <nav aria-label="Page navigation">
+          <ul className="pagination">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <li
+                key={index + 1}
+                className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => handlePageChange(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </div>
   );

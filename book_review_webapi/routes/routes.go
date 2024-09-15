@@ -40,6 +40,7 @@ func SetupRouter(authController *controller.AuthController,
 	publicBooksGroup := router.Group("/api/books")
 	{
 		publicBooksGroup.GET("/all", bookController.GetAllBooks)
+		publicBooksGroup.GET("/allPageable", bookController.GetAllBooksPageable)
 		publicBooksGroup.GET("/:isbn", bookController.GetBookByIsbn)
 		publicBooksGroup.GET("/search", bookController.SearchBooks)
 	}
@@ -48,6 +49,8 @@ func SetupRouter(authController *controller.AuthController,
 	privateBooksGroup.Use(middleware.AuthMiddleware())
 	{
 		privateBooksGroup.POST("/create", middleware.AdminOnly(), bookController.CreateBook)
+		privateBooksGroup.DELETE("/delete/:isbn", middleware.AdminOnly(), bookController.DeleteBookByIsbn)
+		privateBooksGroup.PUT("/update/:isbn", middleware.AdminOnly(), bookController.UpdateBook)
 	}
 
 	publicReviewsGroup := router.Group("/api/reviews")

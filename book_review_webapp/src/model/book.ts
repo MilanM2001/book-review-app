@@ -18,3 +18,8 @@ export type BookRequest = {
     release_date: Date
     categories: CategoryResponse[]
 }
+
+export type BookUpdate = {
+    title: string
+    description: string
+}

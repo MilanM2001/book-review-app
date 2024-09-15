@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getMe, login, refreshToken, register } from "../services/authService";
+import { getMe, login, register } from "../services/authService";
 import { LoginRequest, RegisterRequest } from "../model/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -29,30 +29,6 @@ const useLogin = () => {
     };
 
     return { loginHandler, loading, error, errorMessage };
-};
-
-const useRefreshToken = () => {
-    const [loading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    const refreshTokenHandler = async () => {
-        try {
-            setIsLoading(true);
-            const data = await refreshToken();
-            const newAccessToken = data.accessToken;
-
-            localStorage.setItem('accessToken', newAccessToken);
-            return newAccessToken;
-        } catch (error: any) {
-            setError(error);
-            console.error("Refresh token error:", error);
-            throw error;
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return { refreshTokenHandler, loading, error };
 };
 
 const useRegister = () => {
@@ -116,4 +92,4 @@ const useGetMe = () => {
     return { getMeHandler, error }
 }
 
-export { useLogin, useRefreshToken, useRegister, useLogout, useGetMe }
+export { useLogin, useRegister, useLogout, useGetMe }

@@ -59,7 +59,6 @@ func main() {
 	<-quit
 	log.Println("Shutting down server...")
 
-	// Create a deadline for the graceful shutdown
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

@@ -7,7 +7,7 @@ import { UserResponse } from '../../model/user';
 const Navbar = () => {
     const navigate = useNavigate();
     const { logoutHandler } = useLogout();
-    const { getMeHandler, error } = useGetMe();
+    const { getMeHandler } = useGetMe();
     const [user, setUser] = useState<UserResponse | null>(null);
     const token = localStorage.getItem("accessToken");
 

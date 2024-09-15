@@ -5,6 +5,7 @@ import (
 	"book-review-app/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type BookController struct {
@@ -23,6 +24,32 @@ func (c *BookController) GetAllBooks(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, books)
+}
+
+func (c *BookController) GetAllBooksPageable(ctx *gin.Context) {
+	pageStr := ctx.DefaultQuery("page", "1")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	pageSizeStr := ctx.DefaultQuery("pageSize", "5")
+	pageSize, err := strconv.Atoi(pageSizeStr)
+	if err != nil || pageSize <= 0 {
+		pageSize = 5
+	}
+
+	books, totalPages, err := c.service.FindAllPageable(page, pageSize)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"books":       books,
+		"currentPage": page,
+		"totalPages":  totalPages,
+	})
 }
 
 func (c *BookController) GetBookByIsbn(ctx *gin.Context) {
@@ -69,4 +96,46 @@ func (c *BookController) SearchBooks(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, books)
+}
+
+func (c *BookController) DeleteBookByIsbn(ctx *gin.Context) {
+	isbn := ctx.Param("isbn")
+	err := c.service.DeleteByIsbn(isbn)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Book deleted successfully"})
+}
+
+func (c *BookController) UpdateBook(ctx *gin.Context) {
+	isbn := ctx.Param("isbn")
+
+	var updateData struct {
+		Title       string `json:"title"`
+		Description string `json:"description"`
+	}
+
+	if err := ctx.ShouldBindJSON(&updateData); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	book, err := c.service.FindOneByIsbn(isbn)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	book.Title = updateData.Title
+	book.Description = updateData.Description
+
+	updatedBook, err := c.service.UpdateBook(book)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, updatedBook)
 }

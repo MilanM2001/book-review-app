@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/gin-contrib/cors"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -15,4 +16,12 @@ func CorsConfiguration() cors.Config {
 	corsConfig.MaxAge = 12 * time.Hour
 
 	return corsConfig
+}
+
+func SetupLogger() (*zap.Logger, error) {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		return nil, err
+	}
+	return logger, nil
 }
