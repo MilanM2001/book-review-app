@@ -8,7 +8,8 @@ type Book struct {
 	Description string     `json:"description"`
 	ImageURL    string     `json:"image_url"`
 	Author      string     `json:"author"`
-	Reviews     []Review   `json:"reviews" gorm:"foreignKey:BookID"`
 	ReleaseDate time.Time  `json:"release_date"`
+	Rating      float32    `json:"rating"`
+	Reviews     []Review   `json:"reviews" gorm:"foreignKey:book_isbn"`
 	Categories  []Category `json:"categories" gorm:"many2many:book_categories;"`
 }

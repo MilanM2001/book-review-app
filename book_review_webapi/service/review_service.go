@@ -21,6 +21,14 @@ func (service *ReviewService) FindOneById(id uint) (*model.Review, error) {
 	return service.repo.FindOneById(id)
 }
 
+func (service *ReviewService) FindByUsername(username string) ([]model.Review, error) {
+	return service.repo.FindByUsername(username)
+}
+
+func (service *ReviewService) FindByBookIsbn(bookIsbn string) ([]model.Review, error) {
+	return service.repo.FindByBookIsbn(bookIsbn)
+}
+
 func (service *ReviewService) Create(review model.Review) (*model.Review, error) {
 	return service.repo.Create(review)
 }

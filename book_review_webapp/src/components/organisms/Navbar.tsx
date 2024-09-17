@@ -1,8 +1,9 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Routes, useNavigate } from 'react-router-dom';
 import '../../css/Navbar.css'
 import { useGetMe, useLogout } from '../../hooks/authHooks';
 import { useEffect, useState } from 'react';
 import { UserResponse } from '../../model/user';
+import { AppRoute } from '../../routing/routesEnum';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -13,7 +14,6 @@ const Navbar = () => {
 
     useEffect(() => {
         if (token) {
-            // Fetch user data only if token exists
             getMeHandler().then((res) => {
                 if (res) {
                     setUser(res);
@@ -24,7 +24,7 @@ const Navbar = () => {
 
     const handleLogout = async () => {
         await logoutHandler();
-        setUser(null); // Clear user on logout
+        setUser(null); 
         navigate('/login');
     };
 
@@ -34,16 +34,19 @@ const Navbar = () => {
                 <Link to="/">Main Page</Link>
                 {!token ? (
                     <>
-                        <Link to="/login">Login</Link>
-                        <Link to="/register">Register</Link>
+                        <Link to={AppRoute.LOGIN}>Login</Link>
+                        <Link to={AppRoute.REGISTER}>Register</Link>
                     </>
                 ) : (
                     <>
-                        <Link to="/my-account">My Account</Link>
+                        <Link to={AppRoute.MY_ACCOUNT}>My Account</Link>
                         {user?.role === 'admin' && (
-                            <Link to="/create-book">Add Book</Link>
+                            <Link to={AppRoute.CREATE_BOOK}>Add Book</Link>
                         )}
-                        <Link to="/" onClick={handleLogout}>Logout</Link>
+                        {user?.role === 'admin' && (
+                            <Link to={AppRoute.CREATE_CATEGORY}>Add Category</Link>
+                        )}
+                        <Link to={AppRoute.HOME} onClick={handleLogout}>Logout</Link>
                     </>
                 )}
             </div>

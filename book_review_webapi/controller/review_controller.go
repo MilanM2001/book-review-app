@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type ReviewController struct {
@@ -42,6 +43,28 @@ func (c *ReviewController) GetReviewById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, review)
 }
 
+func (c *ReviewController) GetAllByUsername(ctx *gin.Context) {
+	username := ctx.Param("username")
+	reviews, err := c.service.FindByUsername(username)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, reviews)
+}
+
+func (c *ReviewController) GetAllByBookIsbn(ctx *gin.Context) {
+	bookIsbn := ctx.Param("book_isbn")
+	reviews, err := c.service.FindByBookIsbn(bookIsbn)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, reviews)
+}
+
 func (c *ReviewController) CreateReview(ctx *gin.Context) {
 	var review model.Review
 	err := ctx.ShouldBind(&review)
@@ -49,6 +72,8 @@ func (c *ReviewController) CreateReview(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	review.CreatedAt = time.Now()
 
 	newReview, err := c.service.Create(review)
 	if err != nil {

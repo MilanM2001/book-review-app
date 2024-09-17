@@ -34,6 +34,26 @@ func (repo *ReviewRepositoryImpl) FindOneById(id uint) (*model.Review, error) {
 	return review, nil
 }
 
+func (repo *ReviewRepositoryImpl) FindByUsername(username string) ([]model.Review, error) {
+	var reviews []model.Review
+	err := repo.db.Where("username = ?", username).Find(&reviews).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return reviews, nil
+}
+
+func (repo *ReviewRepositoryImpl) FindByBookIsbn(bookIsbn string) ([]model.Review, error) {
+	var reviews []model.Review
+	err := repo.db.Where("book_isbn = ?", bookIsbn).Find(&reviews).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return reviews, nil
+}
+
 func (repo *ReviewRepositoryImpl) Create(review model.Review) (*model.Review, error) {
 	err := repo.db.Create(&review).Error
 	if err != nil {

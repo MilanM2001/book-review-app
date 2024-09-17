@@ -44,8 +44,7 @@ func main() {
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-
-	// Run the server in a goroutine to allow the main thread to listen for shutdown signals
+	
 	go func() {
 		err := srv.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
