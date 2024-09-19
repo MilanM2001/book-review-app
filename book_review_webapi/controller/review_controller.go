@@ -67,6 +67,13 @@ func (c *ReviewController) GetAllByBookIsbn(ctx *gin.Context) {
 
 func (c *ReviewController) CreateReview(ctx *gin.Context) {
 	var review model.Review
+
+	username, exists := ctx.Get("username")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User not authorized"})
+		return
+	}
+
 	err := ctx.ShouldBind(&review)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -74,6 +81,7 @@ func (c *ReviewController) CreateReview(ctx *gin.Context) {
 	}
 
 	review.CreatedAt = time.Now()
+	review.Username = username.(string)
 
 	newReview, err := c.service.Create(review)
 	if err != nil {

@@ -2,11 +2,13 @@ import { useState } from "react";
 import { getMe, login, register } from "../services/authService";
 import { LoginRequest, RegisterRequest } from "../model/auth";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../services/authContext";
 
 const useLogin = () => {
     const [loading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const { login: loginContext } = useAuth(); // Get the login function from AuthContext
     const navigate = useNavigate();
 
     const loginHandler = async (loginData: LoginRequest) => {
@@ -14,10 +16,9 @@ const useLogin = () => {
             setIsLoading(true);
             const data = await login(loginData);
             const accessToken = data.accessToken;
-            const refreshToken = data.refreshToken
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken)
-            navigate("/")
+            const refreshToken = data.refreshToken;
+            await loginContext(accessToken, refreshToken); // Call the context's login
+            navigate("/"); // Navigate after successful login
         } catch (error: any) {
             if (error.response && (error.response.status === 403 || error.response.status === 401)) {
                 setErrorMessage('Username or Password incorrect');
@@ -58,13 +59,14 @@ const useRegister = () => {
 const useLogout = () => {
     const [loading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { logout: logoutContext } = useAuth(); // Get the logout function from AuthContext
+    const navigate = useNavigate();
 
     const logoutHandler = async () => {
         try {
             setIsLoading(true);
-            localStorage.removeItem("accessToken")
-            localStorage.removeItem("refreshToken")
-            localStorage.clear()
+            logoutContext(); // Call the context's logout
+            navigate("/login"); // Navigate to login page
         } catch (error: any) {
             setError(error);
             console.error(error);

@@ -58,7 +58,7 @@ func SetupRouter(authController *controller.AuthController,
 		publicReviewsGroup.GET("/all", reviewController.GetAllReviews)
 		publicReviewsGroup.GET("/:id", reviewController.GetReviewById)
 		publicReviewsGroup.GET("/allByUsername/:username", reviewController.GetAllByUsername)
-		publicReviewsGroup.GET("/allByBookIsbn/:book_isbn", reviewController.GetAllByUsername)
+		publicReviewsGroup.GET("/allByBookIsbn/:book_isbn", reviewController.GetAllByBookIsbn)
 	}
 
 	privateReviewsGroup := router.Group("/api/reviews")
