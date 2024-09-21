@@ -4,33 +4,33 @@ import { Alert, Button, Card, Container, Spinner, Form } from 'react-bootstrap';
 import '../css/BookDetails.css';
 import { useState } from 'react';
 import { useCreateReview, useGetReviewsByBookIsbn } from '../hooks/reviewHooks';
-import { useAuth } from '../services/authContext'; // Import useAuth
+import { useAuth } from '../services/authContext';
 
 const defaultImage = 'https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=';
 
 const BookDetails = () => {
     const { isbn } = useParams<{ isbn: string }>();
     const { book, loading, error } = useGetBookByIsbn(isbn || '');
-    const { role, isAuthenticated } = useAuth(); // Get role and authentication status
+    const { role, isAuthenticated } = useAuth();
     const { reviews, loading: reviewsLoading, error: reviewsError } = useGetReviewsByBookIsbn(isbn || '');
     const { createReviewHandler, loading: createReviewLoading, error: createReviewError } = useCreateReview();
     const { deleteBookHandler } = useDeleteBook();
-    const { updateBookHandler } = useUpdateBook();
     const navigate = useNavigate();
 
     const [review, setReview] = useState({ title: '', text: '', rating: 0, book_isbn: isbn || '', username: '' });
     const [validated, setValidated] = useState(false);
 
     const handleDelete = async () => {
-        await deleteBookHandler(book.isbn);
-        navigate('/books');
+        if (book && book.isbn) {
+            await deleteBookHandler(book.isbn);
+        }
     };
 
     const handleUpdate = async () => {
-        navigate(`/update-book/${book.isbn}`);
+        if (book && book.isbn) {
+            navigate(`/update-book/${book.isbn}`);
+        }
     };
-
-    console.log(role)
 
     const handleReviewSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -39,6 +39,18 @@ const BookDetails = () => {
             await createReviewHandler(review);
             setReview({ ...review, title: '', text: '', rating: 0 });
         }
+    };
+
+    const renderStars = (rating: number) => {
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            stars.push(
+                <span key={i} style={{ color: i <= rating ? '#ffc107' : '#e4e5e9' }}>
+                    {i <= rating ? '★' : '☆'}
+                </span>
+            );
+        }
+        return stars;
     };
 
     if (loading || reviewsLoading) {
@@ -146,7 +158,7 @@ const BookDetails = () => {
                                 <Card.Body>
                                     <Card.Title>{rev.title}</Card.Title>
                                     <Card.Subtitle className="mb-2 text-muted">
-                                        Rating: {rev.rating} | By: {rev.username}
+                                        Rating: {renderStars(rev.rating)} | By: {rev.username}
                                     </Card.Subtitle>
                                     <Card.Text>{rev.text}</Card.Text>
                                 </Card.Body>

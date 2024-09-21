@@ -55,11 +55,6 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		Password string `json:"password"`
 	}
 
-	var loginResponse struct {
-		AccessToken  string `json:"accessToken"`
-		RefreshToken string `json:"refreshToken"`
-	}
-
 	err := ctx.ShouldBindJSON(&loginData)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -82,6 +77,11 @@ func (c *AuthController) Login(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
 		return
+	}
+
+	var loginResponse struct {
+		AccessToken  string `json:"accessToken"`
+		RefreshToken string `json:"refreshToken"`
 	}
 
 	loginResponse.AccessToken = accessToken

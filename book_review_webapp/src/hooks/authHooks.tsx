@@ -59,14 +59,14 @@ const useRegister = () => {
 const useLogout = () => {
     const [loading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { logout: logoutContext } = useAuth(); // Get the logout function from AuthContext
+    const { logout: logoutContext } = useAuth();
     const navigate = useNavigate();
 
     const logoutHandler = async () => {
         try {
             setIsLoading(true);
-            logoutContext(); // Call the context's logout
-            navigate("/login"); // Navigate to login page
+            logoutContext();
+            navigate("/login"); 
         } catch (error: any) {
             setError(error);
             console.error(error);

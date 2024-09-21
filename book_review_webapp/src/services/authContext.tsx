@@ -37,25 +37,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    // Use fetchUser in useEffect to run on component mount
     useEffect(() => {
         fetchUser();
     }, []);
 
-    // Use fetchUser in the login function as well
     const login = async (accessToken: string, refreshToken: string) => {
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-        setIsAuthenticated(true);
-        await fetchUser(); // Fetch user details after login
+        localStorage.setItem('accessToken', accessToken)
+        localStorage.setItem('refreshToken', refreshToken)
+        setIsAuthenticated(true)
+        await fetchUser()
     };
 
     const logout = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.clear();
-        setIsAuthenticated(false);
-        setRole(null);
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
+        localStorage.clear()
+        setIsAuthenticated(false)
+        setRole(null)
     };
 
     return (

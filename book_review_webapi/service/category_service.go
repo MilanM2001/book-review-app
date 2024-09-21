@@ -17,14 +17,14 @@ func (service *CategoryService) FindAll() ([]model.Category, error) {
 	return service.repo.FindAll()
 }
 
-func (service *CategoryService) FindOne(id uint) (*model.Category, error) {
-	return service.repo.FindOne(id)
-}
-
 func (service *CategoryService) FindOneByName(name string) (*model.Category, error) {
 	return service.repo.FindOneByName(name)
 }
 
 func (service *CategoryService) Create(category model.Category) (*model.Category, error) {
 	return service.repo.Create(category)
+}
+
+func (service *CategoryService) Delete(name string) error {
+	return service.repo.Delete(name)
 }

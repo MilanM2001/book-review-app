@@ -55,17 +55,17 @@ const CreateBookPage = () => {
     };
 
     const handleCategoryChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const categoryId = e.target.value;
+        const categoryName = e.target.value;
         const isChecked = e.target.checked;
 
         setSelectedCategories(prevSelectedCategories => {
             if (isChecked) {
                 // Add category
-                const selectedCategory = categories.find(category => category.id === Number(categoryId));
+                const selectedCategory = categories.find(category => category.name === categoryName);
                 return selectedCategory ? [...prevSelectedCategories, selectedCategory] : prevSelectedCategories;
             } else {
                 // Remove category
-                return prevSelectedCategories.filter(category => category.id !== Number(categoryId));
+                return prevSelectedCategories.filter(category => category.name !== categoryName);
             }
         });
     };
@@ -153,12 +153,12 @@ const CreateBookPage = () => {
                             <Form.Label>Categories</Form.Label>
                             {categories.map((category: CategoryResponse) => (
                                 <Form.Check
-                                    key={category.id}
+                                    key={category.name}
                                     type="checkbox"
-                                    id={`category-${category.id}`}
+                                    id={`category-${category.name}`}
                                     label={category.name}
-                                    value={category.id}
-                                    checked={selectedCategories.some(c => c.id === category.id)}
+                                    value={category.name}
+                                    checked={selectedCategories.some(c => c.name === category.name)}
                                     onChange={handleCategoryChange}
                                 />
                             ))}

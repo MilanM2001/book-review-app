@@ -1,7 +1,7 @@
 import { ReviewRequest } from "../model/review";
 import api from "./api";
 
-export const createReview = async (review: ReviewRequest) => {
+const createReview = async (review: ReviewRequest) => {
     try {
         await api.post("/reviews/create", review);
     } catch (error) {
@@ -10,7 +10,7 @@ export const createReview = async (review: ReviewRequest) => {
     }
 };
 
-export const getReviewsByUsername = async (username: string) => {
+const getReviewsByUsername = async (username: string) => {
     try {
         const response = await api.get(`/reviews/allByUsername/${username}`);
         return response.data;
@@ -20,7 +20,7 @@ export const getReviewsByUsername = async (username: string) => {
     }
 };
 
-export const getReviewsByBookIsbn = async (bookIsbn: string) => {
+const getReviewsByBookIsbn = async (bookIsbn: string) => {
     try {
         const response = await api.get(`/reviews/allByBookIsbn/${bookIsbn}`);
         return response.data;
@@ -29,3 +29,5 @@ export const getReviewsByBookIsbn = async (bookIsbn: string) => {
         throw error;
     }
 };
+
+export { createReview, getReviewsByUsername, getReviewsByBookIsbn }

@@ -9,6 +9,7 @@ import BookDetails from '../pages/BookDetails';
 import CreateBookPage from '../pages/CreateBook';
 import { AppRoute } from './routesEnum';
 import UpdateBookPage from '../pages/UpdateBook';
+import CategoriesPage from '../pages/Categories';
 
 const AppRoutes = () => {
     return (
@@ -21,6 +22,7 @@ const AppRoutes = () => {
                 <Route path={AppRoute.BOOK_DETAILS} element={<BookDetails />} />
                 <Route path={AppRoute.CREATE_BOOK} element={<CreateBookPage />} />
                 <Route path={AppRoute.UPDATE_BOOK} element={<UpdateBookPage />} />
+                <Route path={AppRoute.CATEGORIES} element={<CategoriesPage />} />
                 <Route path={AppRoute.MY_ACCOUNT} element={<MyAccount />} />
                 <Route path={AppRoute.NOT_FOUND} element={<NotFoundPage />} />
             </Routes>

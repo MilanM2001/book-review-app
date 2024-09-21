@@ -76,13 +76,11 @@ func (repo *BookRepositoryImpl) Search(term string) ([]model.Book, error) {
 }
 
 func (repo *BookRepositoryImpl) DeleteByIsbn(isbn string) error {
-	// First, delete the entries from the associative table
 	err := repo.db.Exec("DELETE FROM book_categories WHERE book_isbn = ?", isbn).Error
 	if err != nil {
 		return err
 	}
 
-	// Now, delete the book itself
 	var book model.Book
 	err = repo.db.Where("isbn = ?", isbn).Delete(&book).Error
 	if err != nil {

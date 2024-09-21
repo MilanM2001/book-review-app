@@ -1,38 +1,24 @@
-import { Link, Routes, useNavigate } from 'react-router-dom';
-import '../../css/Navbar.css'
-import { useGetMe, useLogout } from '../../hooks/authHooks';
-import { useEffect, useState } from 'react';
-import { UserResponse } from '../../model/user';
+import { Link, useNavigate } from 'react-router-dom';
+import { useLogout } from '../../hooks/authHooks';
 import { AppRoute } from '../../routing/routesEnum';
+import { useAuth } from '../../services/authContext';
+import '../../css/Navbar.css'
 
 const Navbar = () => {
     const navigate = useNavigate();
     const { logoutHandler } = useLogout();
-    const { getMeHandler } = useGetMe();
-    const [user, setUser] = useState<UserResponse | null>(null);
-    const token = localStorage.getItem("accessToken");
-
-    useEffect(() => {
-        if (token) {
-            getMeHandler().then((res) => {
-                if (res) {
-                    setUser(res);
-                }
-            });
-        }
-    }, [token]);
+    const { role, isAuthenticated } = useAuth(); // Get role and authentication status
 
     const handleLogout = async () => {
         await logoutHandler();
-        setUser(null); 
-        navigate('/login');
+        navigate(AppRoute.LOGIN); // Redirect to login after logout
     };
 
     return (
         <nav className="navbar">
             <div className="navbar-links">
                 <Link to="/">Main Page</Link>
-                {!token ? (
+                {!isAuthenticated ? (
                     <>
                         <Link to={AppRoute.LOGIN}>Login</Link>
                         <Link to={AppRoute.REGISTER}>Register</Link>
@@ -40,11 +26,11 @@ const Navbar = () => {
                 ) : (
                     <>
                         <Link to={AppRoute.MY_ACCOUNT}>My Account</Link>
-                        {user?.role === 'admin' && (
-                            <Link to={AppRoute.CREATE_BOOK}>Add Book</Link>
-                        )}
-                        {user?.role === 'admin' && (
-                            <Link to={AppRoute.CREATE_CATEGORY}>Add Category</Link>
+                        {role === 'admin' && (
+                            <>
+                                <Link to={AppRoute.CREATE_BOOK}>Add Book</Link>
+                                <Link to={AppRoute.CATEGORIES}>Categories</Link>
+                            </>
                         )}
                         <Link to={AppRoute.HOME} onClick={handleLogout}>Logout</Link>
                     </>

@@ -73,9 +73,10 @@ func SetupRouter(authController *controller.AuthController,
 	}
 
 	privateCategoryGroup := router.Group("/api/categories")
-	privateCategoryGroup.Use(middleware.AdminOnly())
+	privateCategoryGroup.Use(middleware.AuthMiddleware())
 	{
-		privateCategoryGroup.POST("/create", categoryController.CreateCategory)
+		privateCategoryGroup.POST("/create", middleware.AdminOnly(), categoryController.CreateCategory)
+		privateCategoryGroup.DELETE("/delete/:name", middleware.AdminOnly(), categoryController.DeleteCategory)
 	}
 
 	return router

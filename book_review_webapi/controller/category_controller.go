@@ -47,3 +47,13 @@ func (c *CategoryController) CreateCategory(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, newCategory)
 }
+
+func (c *CategoryController) DeleteCategory(ctx *gin.Context) {
+	name := ctx.Param("name")
+	err := c.service.Delete(name)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Category deleted"})
+}

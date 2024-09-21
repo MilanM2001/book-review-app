@@ -24,16 +24,6 @@ func (repo CategoryRepositoryImpl) FindAll() ([]model.Category, error) {
 	return categories, nil
 }
 
-func (repo CategoryRepositoryImpl) FindOne(ID uint) (*model.Category, error) {
-	var category model.Category
-	err := repo.db.First(&category, ID).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return &category, nil
-}
-
 func (repo CategoryRepositoryImpl) FindOneByName(name string) (*model.Category, error) {
 	var category *model.Category
 	err := repo.db.Where("name = ?", name).First(&category).Error
@@ -51,4 +41,19 @@ func (repo CategoryRepositoryImpl) Create(category model.Category) (*model.Categ
 	}
 
 	return &category, nil
+}
+
+func (repo CategoryRepositoryImpl) Delete(name string) error {
+	err := repo.db.Exec("DELETE FROM book_categories WHERE category_name = ?", name).Error
+	if err != nil {
+		return err
+	}
+
+	var category *model.Category
+	err = repo.db.Where("name = ?", name).Delete(&category).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

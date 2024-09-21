@@ -1,23 +1,30 @@
-import { Container, Box, CircularProgress, Typography, Paper } from "@mui/material";
-import { useState, useEffect } from "react";
-import { useGetMe } from "../hooks/authHooks"
+import React, { useState, useEffect } from 'react';
+import { Container, Paper, Typography, CircularProgress, Box } from '@mui/material';
+import { getMe } from '../services/authService'; // Make sure this is the correct import for your getMe function
+import { UserResponse } from '../model/user';
+import { useAuth } from '../services/authContext';
 import "../css/MyAccount.css"
 
-const MyAccount = () => {
-    const { getMeHandler, error } = useGetMe();
-    const [user, setUser] = useState<{ username: string; email: string; role: string } | null>(null);
+const MyAccount: React.FC = () => {
+    const { role, isAuthenticated, error: authError } = useAuth();
     const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<UserResponse | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const fetchedUser = await getMeHandler();
-            if (fetchedUser) {
-                setUser(fetchedUser);
+        const fetchUserData = async () => {
+            try {
+                setLoading(true);
+                const userData = await getMe();
+                setUser(userData);
+            } catch (err) {
+                setError('Failed to load your information. Please try again.');
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
-        fetchUser()
 
+        fetchUserData();
     }, []);
 
     if (loading) {
@@ -33,12 +40,12 @@ const MyAccount = () => {
         );
     }
 
-    if (error) {
+    if (error || authError) {
         return (
             <Container className="myaccount-container">
                 <Paper className="error-paper">
                     <Typography variant="h6" color="error">
-                        Failed to load your information. Please try again.
+                        {error || authError}
                     </Typography>
                 </Paper>
             </Container>
