@@ -7,6 +7,7 @@ export type BookResponse = {
     image_url: string
     author: string
     release_date: Date
+    categories: CategoryResponse[]
 }
 
 export type BookRequest = {
@@ -22,4 +23,5 @@ export type BookRequest = {
 export type BookUpdate = {
     title: string
     description: string
+    categories: CategoryResponse[]
 }

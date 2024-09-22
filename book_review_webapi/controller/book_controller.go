@@ -113,8 +113,9 @@ func (c *BookController) UpdateBook(ctx *gin.Context) {
 	isbn := ctx.Param("isbn")
 
 	var updateData struct {
-		Title       string `json:"title"`
-		Description string `json:"description"`
+		Title       string           `json:"title"`
+		Description string           `json:"description"`
+		Categories  []model.Category `json:"categories"`
 	}
 
 	if err := ctx.ShouldBindJSON(&updateData); err != nil {
@@ -130,6 +131,7 @@ func (c *BookController) UpdateBook(ctx *gin.Context) {
 
 	book.Title = updateData.Title
 	book.Description = updateData.Description
+	book.Categories = updateData.Categories
 
 	updatedBook, err := c.service.UpdateBook(book)
 	if err != nil {

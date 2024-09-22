@@ -16,7 +16,7 @@ func NewBookRepositoryImpl(db *gorm.DB) repository.BookRepository {
 
 func (repo *BookRepositoryImpl) FindAll() ([]model.Book, error) {
 	var books []model.Book
-	err := repo.db.Find(&books).Error
+	err := repo.db.Preload("Categories").Find(&books).Error
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func (repo *BookRepositoryImpl) FindAllPageable(page int, pageSize int) ([]model
 	}
 
 	offset := (page - 1) * pageSize
-	err := repo.db.Offset(int(offset)).Limit(pageSize).Find(&books).Error
+	err := repo.db.Preload("Categories").Offset(int(offset)).Limit(pageSize).Find(&books).Error
 	if err != nil {
 		return nil, 0, err
 	}
@@ -49,7 +49,7 @@ func (repo *BookRepositoryImpl) FindAllPageable(page int, pageSize int) ([]model
 
 func (repo *BookRepositoryImpl) FindOneByIsbn(isbn string) (*model.Book, error) {
 	var book *model.Book
-	err := repo.db.Where("isbn = ?", isbn).First(&book).Error
+	err := repo.db.Preload("Categories").Where("isbn = ?", isbn).First(&book).Error
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,13 @@ func (repo *BookRepositoryImpl) Create(book model.Book) (*model.Book, error) {
 
 func (repo *BookRepositoryImpl) Search(term string) ([]model.Book, error) {
 	var books []model.Book
-	err := repo.db.Where("title LIKE ? OR author LIKE ?", "%"+term+"%", "%"+term+"%").Find(&books).Error
+
+	// Join the books and categories tables and search by title, author, or category name
+	err := repo.db.Joins("JOIN book_categories bc ON bc.book_isbn = books.isbn").
+		Joins("JOIN categories c ON c.name = bc.category_name").
+		Where("books.title ILIKE ? OR books.author ILIKE ? OR c.name ILIKE ?", "%"+term+"%", "%"+term+"%", "%"+term+"%").
+		Find(&books).Error
+
 	if err != nil {
 		return nil, err
 	}
@@ -91,9 +97,25 @@ func (repo *BookRepositoryImpl) DeleteByIsbn(isbn string) error {
 }
 
 func (repo *BookRepositoryImpl) UpdateBook(book *model.Book) (*model.Book, error) {
-	err := repo.db.Model(&book).Select("Title", "Description").Updates(book).Error
+	// Start a transaction to update both the book fields and the relationship with categories
+	tx := repo.db.Begin()
+
+	// Update the book's title and description
+	err := tx.Model(&book).Select("Title", "Description").Updates(book).Error
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
+
+	// Update the relationship with categories (clear existing and add new ones)
+	err = tx.Model(&book).Association("Categories").Replace(book.Categories)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// Commit the transaction
+	tx.Commit()
+
 	return book, nil
 }
