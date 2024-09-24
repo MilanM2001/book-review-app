@@ -27,11 +27,14 @@
 }
 
 .home-book-img {
-    height: 200px;
+    width: 290px;
+    height: 440px;
     object-fit: cover;
-    transition: opacity 0.3s ease-in-out;
-    cursor: pointer;
+    border-radius: 10px;
+    margin: 0 auto;
+    margin-top: 20px;
 }
+
 
 .home-book-img:hover {
     opacity: 0.9;

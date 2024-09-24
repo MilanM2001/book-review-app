@@ -97,24 +97,20 @@ func (repo *BookRepositoryImpl) DeleteByIsbn(isbn string) error {
 }
 
 func (repo *BookRepositoryImpl) UpdateBook(book *model.Book) (*model.Book, error) {
-	// Start a transaction to update both the book fields and the relationship with categories
 	tx := repo.db.Begin()
 
-	// Update the book's title and description
 	err := tx.Model(&book).Select("Title", "Description").Updates(book).Error
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	// Update the relationship with categories (clear existing and add new ones)
 	err = tx.Model(&book).Association("Categories").Replace(book.Categories)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	// Commit the transaction
 	tx.Commit()
 
 	return book, nil

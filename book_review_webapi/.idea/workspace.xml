@@ -5,9 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78fd39c1-8738-44ae-9d17-b12ace62181c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/book_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/book_controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/repository/book_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/book_repository.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/repository/repository_impl/book_repository_impl.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/repository_impl/book_repository_impl.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/routes.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/book_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/book_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../book_review_webapp/src/css/HomePage.css" beforeDir="false" afterPath="$PROJECT_DIR$/../book_review_webapp/src/css/HomePage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../book_review_webapp/src/routing/AppRoutes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../book_review_webapp/src/routing/AppRoutes.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../book_review_webapp/src/services/authContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../book_review_webapp/src/services/authContext.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +36,9 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="2lZVbNd6DCw5dzBwidQoc8eRaMa" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -49,7 +59,7 @@
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;go.vgo&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;go.sdk&quot;
   }
 }</component>
   <component name="RunManager">
@@ -79,6 +89,17 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

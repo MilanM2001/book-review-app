@@ -2,6 +2,7 @@ package service
 
 import (
 	"book-review-app/model"
+	"book-review-app/model/dto"
 	"book-review-app/repository"
 )
 
@@ -37,6 +38,15 @@ func (service *BookService) DeleteByIsbn(isbn string) error {
 	return service.repo.DeleteByIsbn(isbn)
 }
 
-func (service *BookService) UpdateBook(book *model.Book) (*model.Book, error) {
+func (service *BookService) UpdateBook(updateBook dto.UpdateBook, isbn string) (*model.Book, error) {
+	book, err := service.FindOneByIsbn(isbn)
+	if err != nil {
+		return nil, err
+	}
+
+	book.Title = updateBook.Title
+	book.Description = updateBook.Description
+	book.Categories = updateBook.Categories
+
 	return service.repo.UpdateBook(book)
 }

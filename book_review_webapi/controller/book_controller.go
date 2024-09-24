@@ -2,6 +2,7 @@ package controller
 
 import (
 	"book-review-app/model"
+	"book-review-app/model/dto"
 	"book-review-app/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -111,29 +112,13 @@ func (c *BookController) DeleteBookByIsbn(ctx *gin.Context) {
 
 func (c *BookController) UpdateBook(ctx *gin.Context) {
 	isbn := ctx.Param("isbn")
-
-	var updateData struct {
-		Title       string           `json:"title"`
-		Description string           `json:"description"`
-		Categories  []model.Category `json:"categories"`
-	}
-
-	if err := ctx.ShouldBindJSON(&updateData); err != nil {
+	var updateBook dto.UpdateBook
+	if err := ctx.ShouldBindJSON(&updateBook); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	book, err := c.service.FindOneByIsbn(isbn)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	book.Title = updateData.Title
-	book.Description = updateData.Description
-	book.Categories = updateData.Categories
-
-	updatedBook, err := c.service.UpdateBook(book)
+	updatedBook, err := c.service.UpdateBook(updateBook, isbn)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

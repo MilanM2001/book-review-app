@@ -18,7 +18,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Move the fetchUser function outside useEffect so that it can be used elsewhere
     const fetchUser = async () => {
         try {
             const token = localStorage.getItem('accessToken');
