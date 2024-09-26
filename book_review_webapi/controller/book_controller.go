@@ -4,6 +4,8 @@ import (
 	"book-review-app/model"
 	"book-review-app/model/dto"
 	"book-review-app/service"
+	"book-review-app/utils"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -65,10 +67,15 @@ func (c *BookController) GetBookByIsbn(ctx *gin.Context) {
 }
 
 func (c *BookController) CreateBook(ctx *gin.Context) {
+	bookJson := ctx.PostForm("book")
+	if bookJson == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Missing book data"})
+		return
+	}
+
 	var book model.Book
-	err := ctx.ShouldBindJSON(&book)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := json.Unmarshal([]byte(bookJson), &book); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book data"})
 		return
 	}
 
@@ -76,6 +83,16 @@ func (c *BookController) CreateBook(ctx *gin.Context) {
 	if existingBook != nil {
 		ctx.JSON(http.StatusConflict, gin.H{"error": "Book already exists"})
 		return
+	}
+
+	if file, err := ctx.FormFile("image"); err == nil { // File was uploaded
+		_, err := utils.SaveImageLocally(ctx, file) // Save the file
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+			return
+		}
+		// Set the ImageURL to the relative path accessible by the frontend
+		book.ImageURL = "/images/" + file.Filename
 	}
 
 	newBook, err := c.service.Create(book)

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"book-review-app/model"
+	"book-review-app/model/dto"
 	"book-review-app/service"
 	"book-review-app/utils"
 	"github.com/gin-gonic/gin"
@@ -50,24 +51,21 @@ func (c *AuthController) Register(ctx *gin.Context) {
 }
 
 func (c *AuthController) Login(ctx *gin.Context) {
-	var loginData struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
+	var loginRequestDto dto.LoginRequestDto
 
-	err := ctx.ShouldBindJSON(&loginData)
+	err := ctx.ShouldBindJSON(&loginRequestDto)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	user, err := c.service.FindOneByUsername(loginData.Username)
+	user, err := c.service.FindOneByUsername(loginRequestDto.Username)
 	if err != nil || user == nil {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": "Incorrect username or password"})
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginData.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequestDto.Password))
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Incorrect username or password"})
 		return
@@ -79,15 +77,12 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	var loginResponse struct {
-		AccessToken  string `json:"accessToken"`
-		RefreshToken string `json:"refreshToken"`
-	}
+	var loginResponseDto dto.LoginResponseDto
 
-	loginResponse.AccessToken = accessToken
-	loginResponse.RefreshToken = refreshToken
+	loginResponseDto.AccessToken = accessToken
+	loginResponseDto.RefreshToken = refreshToken
 
-	ctx.JSON(http.StatusOK, loginResponse)
+	ctx.JSON(http.StatusOK, loginResponseDto)
 }
 
 func (c *AuthController) RefreshToken(ctx *gin.Context) {

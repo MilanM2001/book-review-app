@@ -77,10 +77,14 @@ const HomePage = () => {
               <div className="col-xs-12 col-sm-6 col-md-4 mb-4" key={book.isbn}>
                 <div className="card h-100 home-book-card">
                   <img
-                    src={book.image_url}
+                    src={book.image_url} // Adjust this based on how you save the image name
                     alt={book.title}
                     className="card-img-top home-book-img"
-                    onClick={() => handleBookClick(book.isbn)} // Image click redirects
+                    onClick={() => handleBookClick(book.isbn)}
+                    onError={(e) => {
+                      // Optional: Handle image loading error
+                      e.currentTarget.src = 'public/images/no_image_available.jpg'; // Fallback to default image on error
+                    }}
                   />
                   <div className="card-body d-flex flex-column">
                     <h6

@@ -14,9 +14,9 @@ export type BookRequest = {
     isbn: string
     title: string
     description: string
-    image_url: string
+    image: File | null
     author: string
-    release_date: Date
+    release_date: string
     categories: CategoryResponse[]
 }
 

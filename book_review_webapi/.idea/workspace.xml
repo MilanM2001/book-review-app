@@ -5,16 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="78fd39c1-8738-44ae-9d17-b12ace62181c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/auth_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/book_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/book_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/repository/book_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/book_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/repository/repository_impl/book_repository_impl.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/repository_impl/book_repository_impl.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/dto/register_dto.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/routes/routes.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/book_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/book_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../book_review_webapp/src/css/HomePage.css" beforeDir="false" afterPath="$PROJECT_DIR$/../book_review_webapp/src/css/HomePage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../book_review_webapp/src/routing/AppRoutes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../book_review_webapp/src/routing/AppRoutes.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../book_review_webapp/src/services/authContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../book_review_webapp/src/services/authContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/helper.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/helper.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

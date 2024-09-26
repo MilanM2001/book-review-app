@@ -18,6 +18,8 @@ func SetupRouter(authController *controller.AuthController,
 
 	router.Use(cors.New(corsConfig))
 
+	router.Static("/images", "D:\\Projects\\book_review_project\\book_review_webapp\\public\\images")
+
 	publicAuthGroup := router.Group("/api/auth")
 	{
 		publicAuthGroup.POST("/register", authController.Register)

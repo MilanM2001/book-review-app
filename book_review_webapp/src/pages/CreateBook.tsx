@@ -2,7 +2,7 @@ import { useState, ChangeEvent } from "react";
 import InputFieldTS from "../components/atoms/InputFieldTS";
 import { useCreateBook } from "../hooks/bookHooks";
 import { BookRequest } from "../model/book";
-import "../css/CreateBook.css"
+import "../css/CreateBook.css";
 import { CategoryResponse } from "../model/category";
 import { useGetAllCategories } from "../hooks/categoryHooks";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
@@ -11,9 +11,9 @@ const CreateBookPage = () => {
     const [isbn, setIsbn] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
+    const [imageFile, setImageFile] = useState<File | null>(null);
     const [author, setAuthor] = useState('');
-    const [releaseDate, setReleaseDate] = useState('');
+    const [releaseDate, setReleaseDate] = useState<Date | null>(null); // Set initial state to null
     const [selectedCategories, setSelectedCategories] = useState<CategoryResponse[]>([]);
 
     const [isbnError, setIsbnError] = useState('');
@@ -22,7 +22,7 @@ const CreateBookPage = () => {
     const [emptyError, setEmptyError] = useState('');
 
     const { createBookHandler, errorMessage, loading } = useCreateBook();
-    const { categories, loading: categoryLoading, error: categoryError } = useGetAllCategories();
+    const { categories, loading: categoryLoading } = useGetAllCategories();
 
     const onChangeIsbn = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -60,36 +60,46 @@ const CreateBookPage = () => {
 
         setSelectedCategories(prevSelectedCategories => {
             if (isChecked) {
-                // Add category
                 const selectedCategory = categories.find(category => category.name === categoryName);
                 return selectedCategory ? [...prevSelectedCategories, selectedCategory] : prevSelectedCategories;
             } else {
-                // Remove category
                 return prevSelectedCategories.filter(category => category.name !== categoryName);
             }
         });
     };
 
+    const onImageFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setImageFile(e.target.files[0]);
+        }
+    };
+
     const handleCreateBookClick = () => {
-        if (!isbn || !title || !author) {
+        if (!isbn || !title || !author || !imageFile || !releaseDate) {
             setEmptyError('All fields are required');
             return;
         } else {
             setEmptyError('');
         }
 
-        if (!isbnError && !titleError && !authorError) {
-            const bookData: BookRequest = {
-                isbn,
-                title,
-                description,
-                image_url: imageUrl,
-                author,
-                release_date: new Date(releaseDate),
-                categories: selectedCategories,
-            };
-            createBookHandler(bookData);
+        // Create FormData and append the required fields
+        const formData = new FormData();
+        formData.append('book', JSON.stringify({
+            isbn,
+            title,
+            description,
+            author,
+            release_date: releaseDate.toISOString(), // Convert Date to ISO string
+            categories: selectedCategories.map(cat => ({ name: cat.name })), // Assuming you're sending category names
+        }));
+
+        // Append the image file
+        if (imageFile) {
+            formData.append('image', imageFile);
         }
+
+        // Call createBookHandler with FormData
+        createBookHandler(formData);
     };
 
     return (
@@ -121,16 +131,18 @@ const CreateBookPage = () => {
                                 as="textarea"
                                 rows={3}
                                 value={description}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
+                                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
                             />
                         </Form.Group>
 
-                        <InputFieldTS
-                            label="Image URL"
-                            name="image_url"
-                            value={imageUrl}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => setImageUrl(e.target.value)}
-                        />
+                        <Form.Group controlId="image" className="mt-3">
+                            <Form.Label>Image</Form.Label>
+                            <Form.Control
+                                type="file"
+                                accept="image/*"
+                                onChange={onImageFileChange}
+                            />
+                        </Form.Group>
 
                         <InputFieldTS
                             label="Author"
@@ -144,24 +156,27 @@ const CreateBookPage = () => {
                             <Form.Label>Release Date</Form.Label>
                             <Form.Control
                                 type="date"
-                                value={releaseDate}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) => setReleaseDate(e.target.value)}
+                                value={releaseDate ? releaseDate.toISOString().split("T")[0] : ""} // Convert Date to string for input
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => setReleaseDate(new Date(e.target.value))}
                             />
                         </Form.Group>
 
                         <Form.Group controlId="categories" className="mt-3">
                             <Form.Label>Categories</Form.Label>
-                            {categories.map((category: CategoryResponse) => (
-                                <Form.Check
-                                    key={category.name}
-                                    type="checkbox"
-                                    id={`category-${category.name}`}
-                                    label={category.name}
-                                    value={category.name}
-                                    checked={selectedCategories.some(c => c.name === category.name)}
-                                    onChange={handleCategoryChange}
-                                />
-                            ))}
+                            <Row>
+                                {categories.map((category: CategoryResponse) => (
+                                    <Col xs={6} md={4} key={category.name}>
+                                        <Form.Check
+                                            type="checkbox"
+                                            id={`category-${category.name}`}
+                                            label={category.name}
+                                            value={category.name}
+                                            checked={selectedCategories.some(c => c.name === category.name)}
+                                            onChange={handleCategoryChange}
+                                        />
+                                    </Col>
+                                ))}
+                            </Row>
                         </Form.Group>
 
                         {emptyError && (
@@ -178,7 +193,7 @@ const CreateBookPage = () => {
                             onClick={handleCreateBookClick}
                             disabled={loading || categoryLoading}
                         >
-                            {loading ? 'Creating...' : 'Create Book'}
+                            {loading ? "Creating..." : "Create Book"}
                         </Button>
                     </div>
                 </Col>

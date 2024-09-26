@@ -82,28 +82,29 @@ const useGetBookByIsbn = (isbn: string) => {
 };
 
 const useCreateBook = () => {
-    const [loading, setIsLoading] = useState(false)
-    const [error, setError] = useState(null)
-    const [errorMessage, setErrorMessage] = useState('')
-    const navigate = useNavigate()
+    const [loading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
 
-    const createBookHandler = async (book: BookRequest) => {
+    const createBookHandler = async (formData: FormData) => {
         try {
-            setIsLoading(true)
-            await createBook(book)
-            navigate("/")
+            setIsLoading(true);
+            await createBook(formData);
+            navigate("/");
         } catch (error: any) {
-            if (error.response && error.response.status == 409) {
-                setErrorMessage("ISBN already taken")
+            if (error.response && error.response.status === 409) {
+                setErrorMessage("ISBN already taken");
             }
-            setError(error)
+            setError(error);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
-    return { createBookHandler, loading, error, errorMessage }
-}
+    return { createBookHandler, loading, error, errorMessage };
+};
+
 
 export const useUpdateBook = () => {
     const [loading, setIsLoading] = useState(false);

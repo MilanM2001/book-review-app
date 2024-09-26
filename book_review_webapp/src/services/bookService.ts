@@ -31,14 +31,20 @@ const getBookByIsbn = async (isbn: string) => {
     }
 }
 
-const createBook = async (book: BookRequest) => {
+const createBook = async (formData: FormData) => {
     try {
-        await api.post("/books/create", book)
+        // Send the formData via your API call
+        await api.post("/books/create", formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
     } catch (error) {
-        console.error("Create Book error:", error)
-        throw error
+        console.error("Create Book error:", error);
+        throw error;
     }
-}
+};
+
 
 const updateBook = async (isbn: string, book: BookUpdate) => {
     try {
